@@ -94,6 +94,7 @@ public class ScoredTrigger : MonoBehaviour
             {
                 RightWinObject.SetActive(true);
                 ballController.End();
+                LeftScore = 0;
                 RightScore = 0;
                 RightCountText.text = RightScore.ToString();
             }
@@ -110,6 +111,7 @@ public class ScoredTrigger : MonoBehaviour
                 LeftWinObject.SetActive(true);
                 ballController.End();
                 LeftScore = 0;
+                RightScore = 0;
                 LeftCountText.text = LeftScore.ToString();
             }
             else
