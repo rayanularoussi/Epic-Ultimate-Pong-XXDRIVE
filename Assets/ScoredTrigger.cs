@@ -17,7 +17,16 @@ public class ScoredTrigger : MonoBehaviour
     public GameObject Lobj;
     public GameObject Robj;
     public AudioClip soundClip;
-    
+
+
+    public Color neutralColor = Color.white;
+    public Color leftColor = Color.red; 
+    public Color rightColor = Color.blue; 
+
+
+    public Color neutralOutlineColor = Color.white;
+    public Color leftOutlineColor = Color.red;
+    public Color rightOutlineColor = Color.blue;
 
     void Start()
     {
@@ -90,6 +99,24 @@ public class ScoredTrigger : MonoBehaviour
         if (!isLeft)
         {
             RightCountText.text = RightScore.ToString();
+
+            if (RightScore > LeftScore)
+            {
+                SetTextColors(RightCountText, rightColor, rightOutlineColor);
+                SetTextColors(LeftCountText, neutralColor, neutralOutlineColor);
+            }
+            else if (RightScore < LeftScore)
+            {
+                SetTextColors(RightCountText, neutralColor, neutralOutlineColor);
+                SetTextColors(LeftCountText, leftColor, leftOutlineColor);
+            }
+            else
+            {
+
+                SetTextColors(RightCountText, neutralColor, neutralOutlineColor);
+                SetTextColors(LeftCountText, neutralColor, neutralOutlineColor);
+            }
+
             if (RightScore >= 11)
             {
                 RightWinObject.SetActive(true);
@@ -106,6 +133,24 @@ public class ScoredTrigger : MonoBehaviour
         else
         {
             LeftCountText.text = LeftScore.ToString();
+
+            if (LeftScore > RightScore)
+            {
+                SetTextColors(LeftCountText, leftColor, leftOutlineColor);
+                SetTextColors(RightCountText, neutralColor, neutralOutlineColor);
+            }
+            else if (LeftScore < RightScore)
+            {
+                SetTextColors(LeftCountText, neutralColor, neutralOutlineColor);
+                SetTextColors(RightCountText, rightColor, rightOutlineColor);
+            }
+            else
+            {
+   
+                SetTextColors(LeftCountText, neutralColor, neutralOutlineColor);
+                SetTextColors(RightCountText, neutralColor, neutralOutlineColor);
+            }
+
             if (LeftScore >= 11)
             {
                 LeftWinObject.SetActive(true);
@@ -119,5 +164,12 @@ public class ScoredTrigger : MonoBehaviour
                 DisplayObjectForTwoSeconds(true);
             }
         }
+    }
+
+
+    void SetTextColors(TextMeshProUGUI text, Color color, Color outlineColor)
+    {
+        text.color = color;
+        text.fontSharedMaterial.SetColor("_OutlineColor", outlineColor);
     }
 }

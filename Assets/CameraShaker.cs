@@ -20,7 +20,7 @@ public class CameraShaker : MonoBehaviour
     private void CameraShake()
     {
         mainCamera.DOComplete();
-        mainCamera.DOShakePosition(0.3f, positionStrength);
-        mainCamera.DOShakeRotation(0.3f, rotationStrength);
+        mainCamera.DOShakePosition(0.2f, positionStrength * 0.5f, 10, 90, false, true);
+        mainCamera.DOShakeRotation(0.2f, rotationStrength * 0.5f, 10, 90, false); 
     }
 }

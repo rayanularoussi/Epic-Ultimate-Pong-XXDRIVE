@@ -8,11 +8,17 @@ TagManager:
   - Paddle
   - LeftGoal
   - RightGoal
+  - Right Paddle
+  - Left Paddle
+  - Ball
+  - Fast
+  - Reverse
+  - Tiny
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - FrontOfScore
   - Water
   - UI
   - 
@@ -44,4 +50,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: FrontOfScore
+    uniqueID: 3915924377
     locked: 0

@@ -11,16 +11,25 @@ public class BallController : MonoBehaviour
     private bool isFinished = false;
     private Vector3 initialPosition;
 
+    public Material originalMaterial;
     public Material materialToChange;
     public float colorIncrementAmount = 0.5f;
 
+    public GameObject paddle1;
+    public GameObject paddle2;
 
-    // Start is called before the first frame update    
+    public AudioClip slowSound;
+    public AudioClip mediumSound;
+    public AudioClip fastSound;
+
+    private AudioSource audioSource;
+
     void Start()
     {
         this.rb = GetComponent<Rigidbody>();
         this.RandomStartDirect();
         this.initialPosition = transform.position; 
+        audioSource = GetComponent<AudioSource>();
     }
 
     void FixedUpdate()
@@ -44,6 +53,7 @@ public class BallController : MonoBehaviour
         float X = Mathf.Sign(Random.Range(-1f, 1f));
         float Z = Mathf.Sign(Random.Range(-1f, 1f));
         this.direction = new Vector3(0.5f * X, 0, 0.5f * Z);
+        GetComponent<Renderer>().material = originalMaterial;
     }
 
     private void DirectNew(bool isLeft)
@@ -67,6 +77,7 @@ public class BallController : MonoBehaviour
         if (other.CompareTag("Bord"))
         {
             direction.x = -direction.x;
+
         }
         if (other.CompareTag("Paddle"))
         {
@@ -80,7 +91,59 @@ public class BallController : MonoBehaviour
             Color currentColor = materialToChange.color;
             float newRed = Mathf.Clamp01(currentColor.r + colorIncrementAmount);
             materialToChange.color = new Color(newRed, currentColor.g, currentColor.b, currentColor.a);
+            CameraShaker.Invoke();
+            PlaySoundBasedOnSpeed();
         }
+
+        if (other.CompareTag("Fast"))
+        {
+            Renderer renderer = GetComponent<Renderer>();
+            increasingSpeed *= 1.1f;
+            Destroy(other.gameObject);
+            renderer.material = materialToChange;
+        }
+
+        if (other.CompareTag("Reverse"))
+        {
+            direction *= -1f;
+            Destroy(other.gameObject);
+        }
+
+        if (other.CompareTag("Tiny"))
+        {
+            StartCoroutine(ShrinkAndRestoreBall());
+            Destroy(other.gameObject);
+        }
+    }
+
+    IEnumerator ShrinkAndRestoreBall()
+    {
+        Vector3 newScale = transform.localScale * 0.5f;
+        Vector3 originalScale = transform.localScale;
+
+        float duration = 5f;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            transform.localScale = Vector3.Lerp(originalScale, newScale, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localScale = newScale;
+
+        duration = 2f;
+        elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            transform.localScale = Vector3.Lerp(newScale, originalScale, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localScale = originalScale;
     }
 
     public IEnumerator PauseBallCoroutine()
@@ -96,6 +159,7 @@ public class BallController : MonoBehaviour
 
         isPaused = false;
         rb.isKinematic = false;
+        GetComponent<Renderer>().material = originalMaterial;
     }
 
     public IEnumerator End()
@@ -110,5 +174,26 @@ public class BallController : MonoBehaviour
 
         isPaused = false;
         rb.isKinematic = false;
+        GetComponent<Renderer>().material = originalMaterial;
+    }
+
+    void PlaySoundBasedOnSpeed()
+    {
+        float speed = rb.velocity.magnitude;
+
+        if (increasingSpeed < 1.5f)
+        {
+            audioSource.clip = slowSound;
+        }
+        else if (increasingSpeed < 2f)
+        {
+            audioSource.clip = mediumSound;
+        }
+        else
+        {
+            audioSource.clip = fastSound;
+        }
+
+        audioSource.Play();
     }
 }
